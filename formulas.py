@@ -7,7 +7,7 @@
 
 
 from math import radians, sin, cos, atan2, sqrt
-from .GPSCoordinate import GPSCoordinate
+from GPSCoordinate import GPSCoordinate
 
 def Haversine(coordinate1: GPSCoordinate=None, coordinate2:GPSCoordinate=None, output="miles|kilometers"):
     """Calculate the distance between two points on Earth"""
@@ -37,3 +37,40 @@ def Haversine(coordinate1: GPSCoordinate=None, coordinate2:GPSCoordinate=None, o
     # Calculate the distance
     distance =  c * EarthRadius_M
     return "{0:f} Miles".format(distance)
+
+
+def calories_burned(weight:float, speed: float, minutes:int=1):
+    """ Calculate an estimate of calories burned during excercise.
+        
+        You'll need to know your weight, the activity, and duration of activity. 
+        
+        It uses the following formula to calculate how many calories per minute 
+        you will burn during the activity and then multiply that number by your
+        total exercise minutes.
+
+            Energy expenditure (calories/minute) = .0175 x MET x weight (in kilograms)
+
+        * https://www.hss.edu/conditions_burning-calories-with-exercise-calculating-estimated-energy-expenditure.asp
+
+        @param weight   Persons weight in Kilograms
+        @param speed    Speed a person is travelling
+        @param minutes  Number of minutes spent excercising at this speed
+
+        TODO needs verification to files and input values
+    """
+
+    import json
+
+    with open('./resources/met-efforts.json') as f:
+        j = json.load(f)
+
+    weight = float(weight)
+    speed = float(speed)
+    minutes = int(minutes)
+
+    EFFORT = [x for x in j['met']['running'] if x['speed']==speed][0]
+    MET = EFFORT['met']
+    kCal = 0
+
+    kCal = (0.0175 * MET * weight) * minutes
+    return kCal
