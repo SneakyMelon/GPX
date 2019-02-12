@@ -30,10 +30,66 @@ class GPSCoordinate:
         self._verify()
        
     def __str__(self):
-        return "{}|{}".format(self.latitude, self.longitude)
+
+        return self._to_dms()
 
     def __repr__(self):
         return '<class {}({},{})>'.format(self.__class__.__name__, self.latitude, self.longitude)
+
+    def _to_dms(self)->str:
+        """Convert a GPS coordinate from a float into a degree-minute-second"""
+
+        # Function requirements variables
+        latitude = self.latitude
+        longitude = self.longitude
+  
+        # Get directions on map
+        _NS_direction = "N" if latitude >= 0 else "S"
+        _EW_direction = "E" if longitude >= 0 else "W"
+
+
+        dms_lat = self._get_dms(latitude)
+        dms_long= self._get_dms(longitude)
+
+        rtn = "{} {}°{}'{}\" {} {}°{}'{}\"".format( _NS_direction, dms_lat[0], dms_lat[1], dms_lat[2],
+                                                    _EW_direction, dms_long[0], dms_long[1], dms_long[2])
+        return rtn
+
+    def _get_dms(self, position):
+        """Convert latitude or longitude positions into degree-minute-seconds (DMS) style
+        
+            Degrees:
+                To get the degrees, we split the whole number (gps position) 
+                and leave the remainder. This becomes the degrees.
+
+                56.34346 => 56
+            Minutes:
+                To get the minutes, we get the remainder of degrees and 
+                multiply the remainder by 60, and use the whole number.
+                If the number is negative, to get the same result, take away
+                the remainder from 1 to get the same result as possitive numbers.
+
+                0.34346 * 60 => 20.6076 ==> 20
+            Seconds:
+                Multiply the new remainder of Minutes by 60, and this gives the
+                seconds. This can be rounded up or down, and rounded to as many
+                places as wanted.
+                
+                0.6076 * 60 => 36.456
+            
+            DMS then becomes 56 degrees, 20 minutes, 36.456 seconds
+        """
+        
+        # GPS position to be converted to DMS
+        position = position 
+        _d, _m, _s  = None, None, None
+        _d = int(position)                          
+        _m_remainder = (1 - (position % 1)) if position < 0 else position % 1
+        _m = int(_m_remainder * 60)              
+        _s_remainder = (_m_remainder * 60) % 1
+        _s = round((_s_remainder * 60), 3)
+
+        return (_d, _m, _s)
 
     def _verify(self):
         """Ensure that the values passed are within acceptable ranges"""
