@@ -1,0 +1,61 @@
+{
+  "met": {
+    "running": [
+      {
+        "speed": 5,
+        "met": 8.0,
+        "description": "5.0 mph (12 minute mile)"
+      },
+      {
+        "speed": 5.2,
+        "met": 9,
+        "description": "5.2 mph (11.5 minute mile)"
+      },
+      {
+        "speed": 6.0,
+        "met": 10,
+        "description": "6.0 mph (10 minute mile)"
+      },
+      {
+        "speed": 6.7,
+        "met": 11,
+        "description": "6.7 mph (9 minute mile)"
+      },
+      {
+        "speed": 7.0,
+        "met": 11.5,
+        "description": "7.0 mph (8.5 minute mile)"
+      },
+      {
+        "speed": 7.5,
+        "met": 12.5,
+        "description": "7.5 mph (8 minute mile)"
+      },
+      {
+        "speed": 8.0,
+        "met": 13.5,
+        "description": "8.0 mph (7.5 minute mile)"
+      },
+      {
+        "speed": 8.6,
+        "met": 14,
+        "description": "8.6 mph (7 minute mile)"
+      },
+      {
+        "speed": 9.0,
+        "met": 15,
+        "description": "9.0 mph (6.5 minute mile)"
+      },
+      {
+        "speed": 10,
+        "met": 16,
+        "description": "10.0 mph (6 minute mile)"
+      },
+      {
+        "speed": 10.9,
+        "met": 18,
+        "description": "10.9 mph (5.5 minute mile)"
+      }
+    ]
+  }
+}
