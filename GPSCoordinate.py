@@ -95,10 +95,10 @@ class GPSCoordinate:
         """Ensure that the values passed are within acceptable ranges"""
  
         # Check if int or float
-        if not isinstance(self.latitude, float) or not isinstance(self.latitude, int):
-            raise TypeError("Unsupported GPS data type.")
-        if not isinstance(self.longitude, float) or not isinstance(self.longitude, int):
-            raise TypeError("Unsupported GPS data type.")
+        if not (isinstance(self.latitude, float) or isinstance(self.latitude, int)):
+            raise TypeError("Unsupported GPS data type for latitude.")
+        if not (isinstance(self.longitude, float) or isinstance(self.longitude, int)):
+            raise TypeError("Unsupported GPS data type for longitude.")
 
         # Check if co-ordinates are within correct ranges
         # Verified if -180 <= lat <= 180 (between)
