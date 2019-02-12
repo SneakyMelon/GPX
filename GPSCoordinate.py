@@ -6,6 +6,9 @@
 
     ? Feels like it should be seperate classes for GPS and Co-ordinates
     ?   --> GPS inherits properties of co-ordinates
+
+    TODO Pass GPSCoordinate a Degree-Decimal (DD) formatted coordinate
+    TODO in addition to having the Degree-minute-second support.
 """
 
 class GPSCoordinate:
@@ -88,6 +91,13 @@ class GPSCoordinate:
         _s = round((_s_remainder * 60), 3)
 
         return (_d, _m, _s)
+
+    def to_dd_format(self):
+        """ Converts GPS coordinates from DMS to DD (Decimal Degree)
+            
+            TODO Create conversion from DMS to DD
+        """
+        pass
 
     def _verify(self):
         """Ensure that the values passed are within acceptable ranges"""
