@@ -30,13 +30,12 @@ class GPSCoordinate:
         self._verify()
        
     def __str__(self):
-
-        return self._to_dms()
+        return self.to_dms()
 
     def __repr__(self):
         return '<class {}({},{})>'.format(self.__class__.__name__, self.latitude, self.longitude)
 
-    def _to_dms(self)->str:
+    def to_dms(self)->str:
         """Convert a GPS coordinate from a float into a degree-minute-second"""
 
         # Function requirements variables
@@ -46,7 +45,6 @@ class GPSCoordinate:
         # Get directions on map
         _NS_direction = "N" if latitude >= 0 else "S"
         _EW_direction = "E" if longitude >= 0 else "W"
-
 
         dms_lat = self._get_dms(latitude)
         dms_long= self._get_dms(longitude)
