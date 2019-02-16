@@ -11,14 +11,21 @@ from math import radians, sin, cos, atan2, sqrt
 from GPSCoordinate import GPSCoordinate
 
 
-def Haversine(coordinate1: GPSCoordinate=None, coordinate2:GPSCoordinate=None, output="miles|kilometers"):
-    """Calculate the distance between two points on Earth"""
+def Haversine(coordinate1: GPSCoordinate, coordinate2:GPSCoordinate, output="miles|kilometers|M|km"):
+    """
+        Calculate the distance between two points on Earth
+    
+        TODO Create an output for function
+    """
     
     if not isinstance(coordinate1, GPSCoordinate) or not isinstance(coordinate2, GPSCoordinate):
         raise ValueError("Co-ordinates must not be empty, and be of type 'GPSCoordinate' type.")
 
+    if not (isinstance(output, str) and (output.lower() in ['miles', 'kilometers', 'km', 'M'])):
+        raise ValueError('Output filter must be of type String, and be a supported type of measurement.')
+
     # Earth Constants
-    EarthRadius_M = 3959.87433 # Miles
+    EarthRadius_M = 3959.87433 # Miles (range from 3950-->3963)
     # EarthRadius_km = 6372.79999 # Kilometers
  
     # Initialise variables from paramaters
