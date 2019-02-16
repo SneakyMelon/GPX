@@ -5,9 +5,11 @@
     Some useful formulas that can be used and imported thru-out.
 """
 
+import json
 
 from math import radians, sin, cos, atan2, sqrt
 from GPSCoordinate import GPSCoordinate
+
 
 def Haversine(coordinate1: GPSCoordinate=None, coordinate2:GPSCoordinate=None, output="miles|kilometers"):
     """Calculate the distance between two points on Earth"""
@@ -39,38 +41,102 @@ def Haversine(coordinate1: GPSCoordinate=None, coordinate2:GPSCoordinate=None, o
     return "{0:f} Miles".format(distance)
 
 
-def calories_burned(weight:float, speed: float, minutes:int=1):
+def calories_burned(weight:float, speed:float, minutes:int=1, options:dict=dict()):
     """ Calculate an estimate of calories burned during excercise.
         
-        You'll need to know your weight, the activity, and duration of activity. 
+        In order to calculate an estimated amount of calories burned, you
+        need to know the persons weight, the activity (and effort), as well
+        as the duration of activity.
         
-        It uses the following formula to calculate how many calories per minute 
-        you will burn during the activity and then multiply that number by your
-        total exercise minutes.
+        The following formula is used to calculate how many calories you will
+        burn for each same effort minute of the activity. 
 
-            Energy expenditure (calories/minute) = .0175 x MET x weight (in kilograms)
+        Energy expenditure (calories/minute) = .0175 x MET x weight (in kg)
 
+        Source:
         * https://www.hss.edu/conditions_burning-calories-with-exercise-calculating-estimated-energy-expenditure.asp
 
         @param weight   Persons weight in Kilograms
-        @param speed    Speed a person is travelling
+        @param speed    Speed a person is travelling in miles per hour
         @param minutes  Number of minutes spent excercising at this speed
+        @param options  Determines the input and output format of this function
 
         TODO needs verification to files and input values
+        TODO create an output filter (output=kCal|kj)
     """
 
-    import json
+    if not (isinstance(weight, float) or isinstance(weight, int)):
+        raise TypeError("Weight has to be of type 'int' or of type 'float', not", type(weight))
+    
+    if not (isinstance(speed, float) or  isinstance(speed, int)):
+        raise TypeError("Speed has to be of type 'int' or of type 'float', not", type(speed))
 
-    with open('./resources/met-efforts.json') as f:
+    if not (isinstance(minutes, int)):
+        raise TypeError("Minutes has to be of type 'int', not", type(minutes))
+
+    if not (isinstance(options, dict)):
+        raise TypeError("Options has to be of type 'dict', not", type(options))
+
+    # Defaults
+    minutes = minutes
+    energy = 0
+    options = dict()
+
+    # Default options
+    options['weight']   = 'kg'
+    options['speed']    = 'mph',
+    options['calories'] = 'kcal'
+
+    # Currently supported options
+    supported_formats = {
+        'weight' : ('kg', 'lbs'),
+        'speed'  : ('mph', 'kph'),
+        'calories' : ('kcal', 'kj')
+    }
+
+    # Check each option paramater to make ensure it is supported
+    # Throws ValueError if value is not supported. Then checks
+    # each value to make sure format is supported.
+    for option in options:
+        if not option in supported_formats:
+            raise ValueError('Unsupported option:', option)
+        else:
+            for suboption in supported_formats:
+                if suboption in supported_formats:
+                    options[suboption] = suboption
+                else:
+                    raise ValueError("Unsupported suboption:", suboption)
+
+    # Convert speed to mph from kph
+    if options['speed'] == 'kph':
+        speed = speed / 1.609
+
+    # Convert from stone to lbs. Doing it in this order means
+    # next if statement will catch the unit in lbs.
+
+    # if options['weight'] == 'stone':
+    #    lbs = (weight * 14) + (weight % 14)
+    # options['weight'] = 'lbs'
+
+    # Convert weight from pounds to kilograms
+    if options['weight'] == 'lbs':
+        weight = weight / 14
+
+    with open('./resources/met-efforts.json') as f:   
         j = json.load(f)
-
-    weight = float(weight)
-    speed = float(speed)
-    minutes = int(minutes)
-
+    
+    # EFFORT is a JSON object - get the first object that matches
+    # the speed. Can access MET, SPEED and DESCRIPTION.
     EFFORT = [x for x in j['met']['running'] if x['speed']==speed][0]
+    
+    # Access MET for formula
     MET = EFFORT['met']
-    kCal = 0
+ 
+    # Calories burned
+    energy = (0.0175 * MET * weight) * minutes
 
-    kCal = (0.0175 * MET * weight) * minutes
-    return kCal
+    # Convert energy expenditure to kj
+    if options['calories'] == 'kj':
+        energy = energy * 4.184
+
+    return energy
