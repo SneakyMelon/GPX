@@ -61,8 +61,8 @@ def calories_burned(weight:float, speed:float, minutes:int=1, options:dict=dict(
         @param minutes  Number of minutes spent excercising at this speed
         @param options  Determines the input and output format of this function
 
-        TODO needs verification to files and input values
-        TODO create an output filter (output=kCal|kj)
+        TODO The speed uses hardcoded values. Need to find 
+        TODO  between two values to get the best fitting MET value.
     """
 
     if not (isinstance(weight, float) or isinstance(weight, int)):
@@ -77,35 +77,41 @@ def calories_burned(weight:float, speed:float, minutes:int=1, options:dict=dict(
     if not (isinstance(options, dict)):
         raise TypeError("Options has to be of type 'dict', not", type(options))
 
-    # Defaults
+    # Assign paramaters to local variables
+    weight = weight
+    speed = speed
     minutes = minutes
+    options = options
+    
+    # Locals
     energy = 0
-    options = dict()
 
     # Default options
-    options['weight']   = 'kg'
-    options['speed']    = 'mph',
-    options['calories'] = 'kcal'
+    options['weight'] = options['weight'] or 'kg'
+    options['speed']  = options['speed'] or 'mph'
+    options['calories'] = options['calories'] or 'kcal'
 
     # Currently supported options
     supported_formats = {
-        'weight' : ('kg', 'lbs'),
-        'speed'  : ('mph', 'kph'),
-        'calories' : ('kcal', 'kj')
+        'weight'  : ('kg','lbs'),
+        'speed'   : ('mph','kph'),
+        'calories': ('kcal','kj'),
     }
 
     # Check each option paramater to make ensure it is supported
     # Throws ValueError if value is not supported. Then checks
     # each value to make sure format is supported.
     for option in options:
+        # for [weight, speed, calories] in [weight, speed, calories]
+
         if not option in supported_formats:
             raise ValueError('Unsupported option:', option)
-        else:
-            for suboption in supported_formats:
-                if suboption in supported_formats:
-                    options[suboption] = suboption
-                else:
-                    raise ValueError("Unsupported suboption:", suboption)
+        
+        for suboption in supported_formats:
+            if suboption in supported_formats:
+                options[suboption] = options[suboption]
+            else:
+                raise ValueError("Unsupported suboption:", suboption)
 
     # Convert speed to mph from kph
     if options['speed'] == 'kph':
@@ -120,7 +126,7 @@ def calories_burned(weight:float, speed:float, minutes:int=1, options:dict=dict(
 
     # Convert weight from pounds to kilograms
     if options['weight'] == 'lbs':
-        weight = weight / 14
+        weight = weight / 2.2
 
     with open('./resources/met-efforts.json') as f:   
         j = json.load(f)
@@ -139,4 +145,4 @@ def calories_burned(weight:float, speed:float, minutes:int=1, options:dict=dict(
     if options['calories'] == 'kj':
         energy = energy * 4.184
 
-    return energy
+    return round(energy)
